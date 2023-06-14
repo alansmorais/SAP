@@ -1,0 +1,63 @@
+    Sub ListingSH()
+
+
+If Not IsObject(SApplication) Then
+   Set SapGuiAuto = GetObject("SAPGUI")
+   Set SApplication = SapGuiAuto.GetScriptingEngine
+
+End If
+If Not IsObject(Connection) Then
+   Set Connection = SApplication.Children(0)
+End If
+If Not IsObject(session) Then
+   Set session = Connection.Children(0)
+End If
+If IsObject(WScript) Then
+   WScript.ConnectObject session, "on"
+   WScript.ConnectObject Application, "on"
+End If
+
+'In excell workbook make the changes if neccessary'
+With ActiveSheet
+LastRow = .Cells(.Rows.Count, "A").End(xlUp).Row
+End With
+
+'Line where code shoudl start run'
+
+    For i = 2 To LastRow
+
+'this is for the transaction VB01 to CREATE a listing under ship to'
+session.findById("wnd[0]").resizeWorkingPane 188, 28, False
+session.findById("wnd[0]/usr/cntlIMAGE_CONTAINER/shellcont/shell/shellcont[0]/shell").selectedNode = "F00007"
+session.findById("wnd[0]/usr/cntlIMAGE_CONTAINER/shellcont/shell/shellcont[0]/shell").doubleClickNode "F00007"
+session.findById("wnd[0]/usr/cntlIMAGE_CONTAINER/shellcont/shell/shellcont[0]/shell").selectedNode = "F00050"
+session.findById("wnd[0]/usr/cntlIMAGE_CONTAINER/shellcont/shell/shellcont[0]/shell").doubleClickNode "F00050"
+session.findById("wnd[0]").sendVKey 4
+session.findById("wnd[1]/usr/lbl[6,3]").SetFocus
+session.findById("wnd[1]/usr/lbl[6,3]").caretPosition = 1
+session.findById("wnd[1]").sendVKey 2
+session.findById("wnd[0]").sendVKey 0
+session.findById("wnd[1]").sendVKey 0
+
+'Shio to are added in column A, change as you wish keep aligned with your file'
+session.findById("wnd[0]/usr/ctxtKOMGG-KUNNR").Text = Sheets("Sheet1").Cells(i, "A").Value
+session.findById("wnd[0]/usr/ctxtKOMGG-KUNNR").SetFocus
+session.findById("wnd[0]/usr/ctxtKOMGG-KUNNR").caretPosition = 8
+session.findById("wnd[0]").sendVKey 0
+
+'material added on B column'
+session.findById("wnd[0]/usr/tblSAPMV13GTCTRL_FAST_ENTRY/ctxtKOMGG-MATNR[0,0]").Text = Sheets("Sheet1").Cells(i, "B").Value
+session.findById("wnd[0]/usr/tblSAPMV13GTCTRL_FAST_ENTRY/ctxtKOMGG-MATNR[0,0]").SetFocus
+session.findById("wnd[0]/usr/tblSAPMV13GTCTRL_FAST_ENTRY/ctxtKOMGG-MATNR[0,0]").caretPosition = 0
+session.findById("wnd[0]").sendVKey 0
+session.findById("wnd[0]/tbar[0]/btn[11]").press
+session.findById("wnd[0]/tbar[0]/btn[15]").press
+
+ 
+Next
+
+
+End Sub
+
+
+
