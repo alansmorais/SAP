@@ -1,0 +1,60 @@
+   Sub ExtractingData()
+
+
+If Not IsObject(SApplication) Then
+   Set SapGuiAuto = GetObject("SAPGUI")
+   Set SApplication = SapGuiAuto.GetScriptingEngine
+
+End If
+If Not IsObject(Connection) Then
+   Set Connection = SApplication.Children(0)
+End If
+If Not IsObject(session) Then
+   Set session = Connection.Children(0)
+End If
+If IsObject(WScript) Then
+   WScript.ConnectObject session, "on"
+   WScript.ConnectObject Application, "on"
+End If
+
+With ActiveSheet
+LastRow = .Cells(.Rows.Count, "A").End(xlUp).Row
+End With
+'this code is basic and can be improved as you wish'
+'This code will extract specific data from SAP, you must be able to locate the SAP session id to extract it'
+
+    For i = 11 To LastRow
+    
+session.findById("wnd[0]").resizeWorkingPane 188, 28, False
+
+'This is done on view transaction so no records are rewrite'
+session.findById("wnd[0]/tbar[0]/okcd").Text = "/NVA03"
+session.findById("wnd[0]").sendVKey 0
+
+'In this example I use orders numbers thats will be on column to extract my data'
+session.findById("wnd[0]/usr/ctxtVBAK-VBELN").Text = Sheets("Sheet1").Cells(i, "A").Value
+session.findById("wnd[0]").sendVKey 0
+
+'Remember each session for specific columns, find the session id you want to extract, modify as you wish'
+Sheets("Sheet1").Cells(i, "D").Value = session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:8082/subPART-SUB:SAPMV45A:8084/ctxtKUWEV-KUNNR").Text
+session.findById("wnd[0]").sendVKey 0
+session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:8082/btnBT_HEAD").press
+Sheets("Sheet1").Cells(i, "B").Value = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4301/txtVBAK-ERNAM").Text
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4301/txtVBAK-ERNAM").caretPosition = 6
+session.findById("wnd[0]").sendVKey 0
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4301/txtVBAK-ERNAM").caretPosition = 0
+session.findById("wnd[0]").sendVKey 0
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\07").Select
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\07/ssubSUBSCREEN_BODY:SAPMV45A:4352/subSUBSCREEN_PARTNER_OVERVIEW:SAPLV09C:1000/cmbGV_FILTER").SetFocus
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\07/ssubSUBSCREEN_BODY:SAPMV45A:4352/subSUBSCREEN_PARTNER_OVERVIEW:SAPLV09C:1000/cmbGV_FILTER").Key = "PARPE"
+Sheets("Sheet1").Cells(i, "E").Value = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\07/ssubSUBSCREEN_BODY:SAPMV45A:4352/subSUBSCREEN_PARTNER_OVERVIEW:SAPLV09C:1000/tblSAPLV09CGV_TC_PARTNER_OVERVIEW/txtGVS_TC_DATA-REC-NAME1[3,0]").Text
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\07/ssubSUBSCREEN_BODY:SAPMV45A:4352/subSUBSCREEN_PARTNER_OVERVIEW:SAPLV09C:1000/cmbGV_FILTER").Key = "PARDE"
+Sheets("Sheet1").Cells(i, "C").Value = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\07/ssubSUBSCREEN_BODY:SAPMV45A:4352/subSUBSCREEN_PARTNER_OVERVIEW:SAPLV09C:1000/tblSAPLV09CGV_TC_PARTNER_OVERVIEW/txtGVS_TC_DATA-REC-NAME1[2,1]").Text
+
+session.findById("wnd[0]").sendVKey 0
+session.findById("wnd[0]/tbar[0]/btn[15]").press
+ 
+Next
+
+End Sub
+
