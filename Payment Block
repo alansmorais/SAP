@@ -1,0 +1,63 @@
+ Sub PaymentBlock()
+
+
+If Not IsObject(SApplication) Then
+   Set SapGuiAuto = GetObject("SAPGUI")
+   Set SApplication = SapGuiAuto.GetScriptingEngine
+   
+End If
+If Not IsObject(Connection) Then
+   Set Connection = SApplication.Children(0)
+End If
+If Not IsObject(session) Then
+   Set session = Connection.Children(0)
+End If
+If IsObject(WScript) Then
+   WScript.ConnectObject session, "on"
+   WScript.ConnectObject SApplication, "on"
+End If
+
+With ActiveSheet
+LastRow = .Cells(.Rows.Count, "A").End(xlUp).Row
+End With
+
+
+    For i = 2 To LastRow
+
+session.findById("wnd[0]").resizeWorkingPane 82, 23, False
+session.findById("wnd[0]/tbar[0]/okcd").Text = "xk02"
+session.findById("wnd[0]").sendVKey 0
+    On Error Resume Next
+session.findById("wnd[0]/usr/ctxtRF02K-LIFNR").Text = Sheets("PaymentBlock").Cells(i, "A").Value
+    On Error Resume Next
+session.findById("wnd[0]/usr/ctxtRF02K-BUKRS").Text = Sheets("PaymentBlock").Cells(i, "B").Value
+    On Error Resume Next
+session.findById("wnd[0]/usr/chkRF02K-D0215").Selected = True
+    On Error Resume Next
+session.findById("wnd[0]").sendVKey 0
+    On Error Resume Next
+session.findById("wnd[0]/usr/ctxtLFB1-ZAHLS").Text = Sheets("PaymentBlock").Cells(i, "D").Value
+    On Error Resume Next
+session.findById("wnd[0]/usr/ctxtLFB1-ZAHLS").SetFocus
+    On Error Resume Next
+session.findById("wnd[0]/usr/ctxtLFB1-ZAHLS").caretPosition = 1
+    On Error Resume Next
+session.findById("wnd[0]/tbar[0]/btn[11]").press
+    On Error Resume Next
+session.findById("wnd[0]/tbar[0]/btn[3]").press
+    On Error Resume Next
+session.findById("wnd[1]/usr/btnSPOP-OPTION_CAN").press
+    On Error Resume Next
+session.findById("wnd[0]/tbar[0]/btn[11]").press
+    On Error Resume Next
+session.findById("wnd[0]").sendVKey 0
+    On Error Resume Next
+session.findById("wnd[1]/usr/btnSPOP-OPTION2").press
+    On Error Resume Next
+session.findById("wnd[0]/tbar[0]/btn[12]").press
+
+Next
+
+End Sub
+
+
