@@ -28,14 +28,17 @@ session.findById("wnd[0]").resizeWorkingPane 82, 23, False
 session.findById("wnd[0]/tbar[0]/okcd").Text = "xk02"
 session.findById("wnd[0]").sendVKey 0
     On Error Resume Next
+    'Vendor Number'
 session.findById("wnd[0]/usr/ctxtRF02K-LIFNR").Text = Sheets("PaymentBlock").Cells(i, "A").Value
     On Error Resume Next
+    'Company Code'
 session.findById("wnd[0]/usr/ctxtRF02K-BUKRS").Text = Sheets("PaymentBlock").Cells(i, "B").Value
     On Error Resume Next
 session.findById("wnd[0]/usr/chkRF02K-D0215").Selected = True
     On Error Resume Next
 session.findById("wnd[0]").sendVKey 0
     On Error Resume Next
+    'Payment Block True/False'
 session.findById("wnd[0]/usr/ctxtLFB1-ZAHLS").Text = Sheets("PaymentBlock").Cells(i, "D").Value
     On Error Resume Next
 session.findById("wnd[0]/usr/ctxtLFB1-ZAHLS").SetFocus
